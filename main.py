@@ -33,10 +33,10 @@ class command():
 	def __str__(self):
 		return "Cmd: \"" + self.cmd + "\", Action:\"" + self.action + "\""
 	def do(self):
-		subprocess.call(self.action.split(),shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		subprocess.call(self.action.split(), shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	def do_verbose(self):
-		output = subprocess.check_output(self.action.split(), shell=False)
-		print output
+		print subprocess.check_output(self.action.split(), shell=False)
+
 
 ## Main Function   ------------------------------------------
 def main_loop():
@@ -50,7 +50,7 @@ def main_loop():
 			# Check for given commands
 
 			# Execute Commands
-			commandList[1].do_verbose()
+			commandList[0].do_verbose()
 
 			# Check Status in Config File
 			value = updateConfigFile("Program", "status")
@@ -66,6 +66,11 @@ def main_loop():
 	except (KeyboardInterrupt, SystemExit):
 		stateMachine = STATE_ERROR
 		stop("User Killed Jarvis, powering down.")
+		raise
+
+	except:
+		stateMachine = STATE_ERROR
+		stop("Unknown Error Killed Jarvis, powering down.")
 		raise
 
 
