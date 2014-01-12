@@ -22,9 +22,19 @@ CONFIG_FILE_PATH = "config.ini"
 verbose = True
 stateMachine = STATE_STOP
 configFile = []
+commandList = []
 
 
-## Main Function 
+## DEFINITIONS ----------------------------------------------
+class command():
+	def __init__(self, speech, cmd):
+		self.speech = speech;
+		self.cmd = cmd;
+	def __str__(self):
+		return "Cmd: \"" + self.speech + "\", Action:\"" + self.cmd + "\""
+
+
+## Main Function   ------------------------------------------
 def main_loop():
 
 	# Initialize Variables
@@ -65,8 +75,11 @@ def startup():
 	# Get Name of Operating System
 	os_name = platform.system()
 
-	# Initalize Configuration File
+	# Initialize Configuration File
 	configFile = ConfigParser.ConfigParser()
+
+	# build Command list from configuration File
+	buildCommandList()
 
 	num_instances_running = updateConfigFile("Program", "Number_Of_Instances")
 	num_instances_running = int(num_instances_running)
@@ -91,6 +104,29 @@ def startup():
 
 		# Run Main Loop
 		main_loop()
+
+
+# build Command List
+def buildCommandList():
+
+	# Initialize Variables
+	global configFile
+	global commandList
+
+	# Update Configuration File
+	configFile.read(CONFIG_FILE_PATH)
+
+	# Iterate through command pairs
+	options = configFile.options("Commands")
+	for option in options:
+		try:
+			output = configFile.get("Commands", option)
+			pair = output.split(",")
+			commandList.append(command(pair[0], pair[1]));
+			print commandList[len(commandList)-1]
+		except:
+			print "Invalid Command in Configuration File"
+			return
 
 
 # Interface for Configuration File
