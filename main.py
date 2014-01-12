@@ -27,12 +27,16 @@ commandList = []
 
 ## DEFINITIONS ----------------------------------------------
 class command():
-	def __init__(self, speech, cmd):
-		self.speech = speech;
+	def __init__(self, cmd, action):
 		self.cmd = cmd;
+		self.action = action;
 	def __str__(self):
-		return "Cmd: \"" + self.speech + "\", Action:\"" + self.cmd + "\""
-
+		return "Cmd: \"" + self.cmd + "\", Action:\"" + self.action + "\""
+	def do(self):
+		subprocess.call(self.action.split(),shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	def do_verbose(self):
+		output = subprocess.check_output(self.action.split(), shell=False)
+		print output
 
 ## Main Function   ------------------------------------------
 def main_loop():
@@ -43,9 +47,10 @@ def main_loop():
 
 	try:
 		while (stateMachine != 0):
-			# Check for new commands
+			# Check for given commands
 
-			# Execute New Commands
+			# Execute Commands
+			commandList[1].do_verbose()
 
 			# Check Status in Config File
 			value = updateConfigFile("Program", "status")
