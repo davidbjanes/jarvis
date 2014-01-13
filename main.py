@@ -21,6 +21,8 @@ LOG_FILE_PATH = "log.txt"
 STATE_ON = True
 STATE_OFF = False
 
+
+## Global MESSAGE Constants  ----------------------------------------
 MSG_STARTUP = "Jarvis is booting up ----------------------------------"
 MSG_RUNNING = "Running..."
 MSG_ENDING = "Jarvis is powering down."
@@ -51,7 +53,7 @@ def main_loop():
 			# Check for given commands
 
 			# Execute Commands
-			#commandList[0].do_verbose()
+			# commandList[0].do()
 
 			# Check Status in Config File
 			value = configFile.poll("Program", "status")
