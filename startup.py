@@ -30,7 +30,7 @@ def startup():
 		return
 
 	# Operating System Check
-	if os_name == "Windows" or os_name == "Unix":
+	if os_name == "Windows" or os_name == "Linux":
 		print "Jarvis is Running!"
 
 		# Initialize Configuration File
@@ -54,7 +54,7 @@ def startup():
 			configFile.update("Program", "instance_ID", process_obj.pid)
 
 	else:
-		print "I'm sorry, you are running " + os_name + ". I currently only run on Windows/Unix"
+		print "I'm sorry, you are running " + os_name + ". I currently only run on Windows/Linux"
 		return
 
 
