@@ -51,9 +51,12 @@ def main_loop():
 		while (stateMachine == STATE_ON):
 
 			# Check for given commands
+			pendingCommandList = configFile.getPendingCommandList()
 
 			# Execute Commands
 			# commandList[0].do()
+			for pendingCommand in pendingCommandList:
+				text == pendingCommand.do()
 
 			# Check Status in Config File
 			value = configFile.poll("Program", "status")

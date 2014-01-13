@@ -40,10 +40,10 @@ class ConfigFileManager():
 		self.configFile.read(self.CONFIG_FILE_PATH)
 
 		# Iterate through command pairs
-		options = self.configFile.options("Commands")
+		options = self.configFile.options("CommandDefinition")
 		for option in options:
 			try:
-				output = self.configFile.get("Commands", option)
+				output = self.configFile.get("CommandDefinition", option)
 				pair = output.split(",")
 				commandList.append(Command(pair[0], pair[1]));
 				print "DEBUGGING:" + str(commandList[len(commandList)-1])
@@ -54,4 +54,28 @@ class ConfigFileManager():
 
 		return commandList
 
+
+	# read Pending Command List
+	def getPendingCommandList(self):
+
+		# Initialize Variables
+		commandList = []
+
+		# Update Configuration File
+		self.configFile.read(self.CONFIG_FILE_PATH)
+
+		# Iterate through command pairs
+		options = self.configFile.options("PendingCommands")
+		for option in options:
+			try:
+				output = self.configFile.get("PendingCommands", option)
+				pair = output.split(",")
+				commandList.append(Command(pair[0], pair[1]));
+				print "DEBUGGING:" + str(commandList[len(commandList)-1])
+
+			except Exception as exception:
+				print "ERROR:" + "Invalid Command in Configuration File"
+				return -1
+
+		return commandList
 
