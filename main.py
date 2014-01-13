@@ -8,9 +8,11 @@ import subprocess
 import time
 import sys
 import signal
+import ast
+import Logger
 from CommandClass import Command
 from ConfigFileManager import ConfigFileManager
-from stop import stop
+from shutdown import shutdown
 
 
 ## Global Constants  ----------------------------------------
@@ -19,6 +21,13 @@ LOG_FILE_PATH = "log.txt"
 STATE_ON = True
 STATE_OFF = False
 
+MSG_STARTUP = "Jarvis is booting up ----------------------------------"
+MSG_RUNNING = "Running..."
+MSG_ENDING = "Jarvis is powering down."
+MSG_ERROR_1 = "User Killed Jarvis, powering down."
+MSG_ERROR_2 = "Unknown Error Killed Jarvis, powering down."
+
+
 ## Global Variables  ----------------------------------------
 verbose = True
 
@@ -26,72 +35,48 @@ verbose = True
 ## Main Function   ------------------------------------------
 def main_loop():
 
-	logFile = open(LOG_FILE_PATH, 'a')
-	sys.stdout = logFile
-	print time.strftime("%Y.%m.%d_%H.%M.%S:") + "Jarvis is booting up ----------------------------------"
-
 	configFile = ConfigFileManager(CONFIG_FILE_PATH)
 
-	commandList = buildCommandList(configFile)
+	commandList = configFile.buildCommandList()
 
 	configFile.update("Program", "status", STATE_ON)
 	stateMachine = STATE_ON
 
-	try:
-		#while (stateMachine != 0):
-		for x in range(0,20):
+	logFile = Logger.Logger(LOG_FILE_PATH)
+	logFile.log(MSG_STARTUP)
 
-			time_str = time.strftime("%Y.%m.%d_%H.%M.%S:")
+	try:
+		while (stateMachine == STATE_ON):
 
 			# Check for given commands
 
 			# Execute Commands
-			commandList[0].do_verbose()
+			#commandList[0].do_verbose()
 
 			# Check Status in Config File
-			stateMachine = configFile.poll("Program", "status")
+			value = configFile.poll("Program", "status")
+			stateMachine = ast.literal_eval(value)
 
 			# Dummy Command
-			print time_str + "Running..."
+			logFile.log(MSG_RUNNING)
 			time.sleep(1)
 
 		# stateMachine has ended loop
-		stop()
+		logFile.log(MSG_ENDING)
+		shutdown()
+
+
 
 	except (KeyboardInterrupt, SystemExit, signal.SIGINT, OSError):
-		configFile.update("Program", "error_code", 1)
-		stop(time_str + "User Killed Jarvis, powering down.")
+		logFile.log(MSG_ERROR_1)
+		shutdown(1)
 		raise
 
 	except:
-		configFile.update("Program", "error_code", 2)
-		stop(time_str + "Unknown Error Killed Jarvis, powering down.")
+		logFile.log(MSG_ERROR_2)
+		shutdown(2)
 		raise
 
-
-# build Command List
-def buildCommandList(configFile):
-
-	# Initialize Variables
-	commandList = []
-
-	# Update Configuration File
-	configFile.file.read(configFile.CONFIG_FILE_PATH)
-
-	# Iterate through command pairs
-	options = configFile.file.options("Commands")
-	for option in options:
-		try:
-			output = configFile.file.get("Commands", option)
-			pair = output.split(",")
-			commandList.append(Command(pair[0], pair[1]));
-			print commandList[len(commandList)-1]
-
-		except:
-			print "Invalid Command in Configuration File"
-			return
-
-	return commandList
 
 
 # Default 'def' to start at

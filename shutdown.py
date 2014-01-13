@@ -2,6 +2,7 @@
 ## DEPENDANCIES  --------------------------------------------
 import ConfigParser
 import os
+import sys
 from ConfigFileManager import ConfigFileManager
 
 
@@ -12,12 +13,16 @@ STATE_OFF = False
 
 
 # Turn off Jarvis
-def stop(error_msg = "Jarvis is powering down."):
+def shutdown(error_code = 0):
 
 	# Initialize Configuration File
 	configFile = ConfigFileManager(CONFIG_FILE_PATH)
 
 	configFile.update("Program", "instance_ID", "NaN")
 	configFile.update("Program", "status", STATE_OFF)
+	configFile.update("Program", "error_code", error_code)
 
-	print error_msg
+
+# Default 'def' to start at
+if __name__ == "__main__":
+	shutdown()

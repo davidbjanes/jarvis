@@ -5,6 +5,8 @@ import os
 import sys
 import subprocess
 from ConfigFileManager import ConfigFileManager
+from multiprocessing import Process
+import main
 
 
 ## DEFINITIONS ----------------------------------------------
@@ -28,11 +30,7 @@ def startup():
 		return
 
 	# Operating System Check
-	if os_name == "Other":
-		stop("I'm sorry, but I currently only run on ...")
-		return
-
-	else: 
+	if os_name == "Windows" or os_name == "Unix":
 		print "Jarvis is Running!"
 
 		# Initialize Configuration File
@@ -40,12 +38,24 @@ def startup():
 		configFile.update("Program", "instance_id", "NaN")
 		configFile.update("Program", "error_code", "NaN")
 
-		# Boot Up Jarvis
 		command_str = "python main.py"
 
-		# spawn JARVIS
-		process_obj = subprocess.Popen(command_str.split(), shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-		configFile.update("Program", "instance_ID", process_obj.pid)
+		if os_name == "Windows":
+			process_obj = subprocess.Popen(command_str.split(), creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
+			configFile.update("Program", "instance_ID", process_obj.pid)
+			print "Windows Version Created!"
+
+		else:
+			# Create New Process Group
+			os.setpgrp() 
+
+			# spawn JARVIS
+			process_obj = subprocess.Popen(command_str.split(), shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+			configFile.update("Program", "instance_ID", process_obj.pid)
+
+	else:
+		print "I'm sorry, but I currently only run on Windows/Unix"
+		return
 
 
 # Default 'def' to start at
