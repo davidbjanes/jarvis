@@ -54,7 +54,7 @@ def startup():
 			configFile.update("Program", "instance_ID", process_obj.pid)
 
 	else:
-		print "I'm sorry, but I currently only run on Windows/Unix"
+		print "I'm sorry, you are running " + os_name + ". I currently only run on Windows/Unix"
 		return
 
 
